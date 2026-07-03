@@ -258,26 +258,40 @@
   @media (max-width:1080px){.side-rail{display:none}}
 
   /* holographic corner sticker — tucked in corner at rest, slides in on hover */
-  .holo{position:fixed;left:-80px;bottom:-80px;z-index:40;width:120px;height:120px;cursor:pointer;
-    perspective:520px;will-change:transform;transition:transform .55s var(--spring),filter .45s var(--ease);filter:drop-shadow(0 0 0 rgba(0,0,0,0))}
-  .holo:hover{transform:translate(130px,-130px) scale(3.1);filter:drop-shadow(0 26px 40px rgba(20,40,70,.55))}
+  .holo{position:fixed;left:-36px;bottom:-36px;z-index:40;width:372px;height:372px;cursor:pointer;
+    --holo-dock-x:0px;--holo-dock-y:0px;--holo-scale:.322;--holo-pop-y:0px;
+    perspective:720px;transform:translate(var(--holo-dock-x),var(--holo-dock-y)) translateY(var(--holo-pop-y)) scale(var(--holo-scale));
+    transform-origin:left bottom;transition:transform .55s var(--spring),filter .45s var(--ease)}
+  .holo:hover{--holo-dock-x:46px;--holo-dock-y:-46px;--holo-scale:.94;filter:drop-shadow(0 26px 40px rgba(20,40,70,.55))}
   .holo-outline{position:absolute;inset:0;overflow:visible;pointer-events:none;transition:opacity .3s ease}
   .holo-outline path{fill:none;stroke:var(--hairline-strong);stroke-width:1;vector-effect:non-scaling-stroke}
   .holo:hover .holo-outline{opacity:0}
   .holo-inner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .12s ease-out}
   .holo-layer{position:absolute;inset:0;clip-path:var(--star,none);opacity:0;transition:opacity .4s var(--ease);backface-visibility:hidden}
   .holo:hover .holo-layer{opacity:1}
-  .holo-base{background:var(--holo-grad);background-size:300% 300%;animation:holoShift 7s linear infinite;transform:translateZ(-18px)}
-  .holo-emoji{transform:translateZ(8px);will-change:transform,opacity}
+  .holo-base{z-index:1;background:var(--holo-grad);background-size:260% 260%;background-position:var(--holo-x,50%) var(--holo-y,50%)}
+  .holo-emoji{z-index:2;overflow:hidden}
   .holo:hover .holo-emoji{opacity:.34}
-  .holo-emoji span{position:absolute;line-height:1;transform:translate(-50%,-50%) rotate(var(--r,0deg));will-change:transform}
-  .holo-text{position:absolute;inset:0;display:grid;place-items:center;opacity:0;pointer-events:none;transform:translateZ(42px);transition:opacity .4s var(--ease)}
+  .holo-emoji-track{position:absolute;inset:-8%;transform:translate(var(--emoji-x,0px),var(--emoji-y,0px))}
+  .holo-emoji span{position:absolute;line-height:1;opacity:.72;transform:translate(-50%,-50%) rotate(var(--r,0deg))}
+  .holo-shine{background:
+      radial-gradient(circle at var(--holo-x,50%) var(--holo-y,50%),rgba(255,255,255,.82),rgba(169,218,239,.34) 18%,transparent 38%),
+      linear-gradient(var(--holo-angle,120deg),transparent 16%,rgba(255,255,255,.16) 30%,rgba(127,211,236,.58) 44%,rgba(255,255,255,.74) 50%,rgba(138,169,198,.24) 59%,transparent 76%);
+    z-index:3;mix-blend-mode:var(--holo-blend);opacity:0;transform:translate(var(--shine-x,0px),var(--shine-y,0px))}
+  .holo:hover .holo-shine{opacity:.72}
+  .holo-text{position:absolute;inset:0;display:grid;place-items:center;opacity:0;pointer-events:none;
+    z-index:4;transform:translate(var(--text-x,0px),var(--text-y,0px));transition:opacity .4s var(--ease)}
   .holo:hover .holo-text{opacity:1}
-  .holo-text span{font-family:var(--font-display);font-weight:700;font-style:italic;font-size:18px;letter-spacing:-0.02em;
+  .holo-text span{font-family:var(--font-display);font-weight:700;font-style:italic;font-size:56px;letter-spacing:-0.02em;
     color:var(--holo-text);transform:rotate(-20deg) skewX(-6deg);text-shadow:var(--holo-text-shadow)}
-  .holo-inner.pop{animation:holoPop .45s var(--spring)}
-  @keyframes holoShift{0%{background-position:0% 50%}100%{background-position:300% 50%}}
-  @keyframes holoPop{0%{transform:scale(.92)}55%{transform:scale(1.06)}100%{transform:scale(1)}}
+  .holo.pop{animation:holoRise .48s var(--spring)}
+  .holo-inner.pop{animation:holoFlash .36s ease-out}
+  @keyframes holoRise{
+    0%{transform:translate(var(--holo-dock-x),var(--holo-dock-y)) translateY(0) scale(var(--holo-scale))}
+    42%{transform:translate(var(--holo-dock-x),var(--holo-dock-y)) translateY(-18px) scale(var(--holo-scale))}
+    100%{transform:translate(var(--holo-dock-x),var(--holo-dock-y)) translateY(0) scale(var(--holo-scale))}
+  }
+  @keyframes holoFlash{0%,100%{filter:none}45%{filter:brightness(1.16) saturate(1.08)}}
 
   /* gradient sweep on lang / theme switch */
   .sweep{position:fixed;inset:0;z-index:80;pointer-events:none;opacity:0;
@@ -341,14 +355,15 @@
     section.block{padding:48px 0}
     .modal{padding:24px 20px;max-height:88svh}
     .modal-close{top:12px;right:12px}
-    .holo{width:104px;height:104px;left:-70px;bottom:-70px}
-    .holo-text span{font-size:15px}
+    .holo{left:-28px;bottom:-28px;width:265px;height:265px;--holo-dock-x:0px;--holo-dock-y:0px;--holo-scale:.392}
+    .holo-text span{font-size:40px}
   }
   @media (hover:none) and (pointer:coarse){
-    body.gyro-tilt .holo{transform:translate(104px,-104px) scale(2.55);filter:drop-shadow(0 22px 36px rgba(20,40,70,.48))}
+    body.gyro-tilt .holo{--holo-dock-x:36px;--holo-dock-y:-36px;--holo-scale:.94;filter:drop-shadow(0 22px 36px rgba(20,40,70,.48))}
     body.gyro-tilt .holo-outline{opacity:0}
     body.gyro-tilt .holo-layer{opacity:1}
     body.gyro-tilt .holo-emoji{opacity:.34}
+    body.gyro-tilt .holo-shine{opacity:.72}
     body.gyro-tilt .holo-text{opacity:1}
   }
   @media (prefers-reduced-motion:reduce){
@@ -554,7 +569,8 @@
   <svg class="holo-outline" viewBox="0 0 100 100" preserveAspectRatio="none"><path id="holoPath" d=""/></svg>
   <div class="holo-inner">
     <div class="holo-layer holo-base"></div>
-    <div class="holo-layer holo-emoji"></div>
+    <div class="holo-layer holo-emoji"><div class="holo-emoji-track"></div></div>
+    <div class="holo-layer holo-shine"></div>
     <div class="holo-text"><span data-i18n="holoText">别点</span></div>
   </div>
 </div>
@@ -743,14 +759,25 @@
     var gyroProjects=[].slice.call(document.querySelectorAll('.proj'));
     var gyroMeta=[].slice.call(document.querySelectorAll('.meta-card'));
     function gyroClamp(v,a,b){return v<a?a:v>b?b:v;}
+    function resetHoloPaint(holo){
+      if(!holo)return;
+      holo.style.setProperty('--holo-x','50%');
+      holo.style.setProperty('--holo-y','50%');
+      holo.style.setProperty('--holo-angle','120deg');
+      holo.style.setProperty('--emoji-x','0px');
+      holo.style.setProperty('--emoji-y','0px');
+      holo.style.setProperty('--shine-x','0px');
+      holo.style.setProperty('--shine-y','0px');
+      holo.style.setProperty('--text-x','0px');
+      holo.style.setProperty('--text-y','0px');
+    }
     function setGyroSticker(open){
       gyro.stickerOpen=open;
       document.body.classList.toggle('gyro-tilt',open);
       if(!open){
-        var holo=document.getElementById('holo'),inner=holo&&holo.querySelector('.holo-inner'),emoji=holo&&holo.querySelector('.holo-emoji');
+        var holo=document.getElementById('holo'),inner=holo&&holo.querySelector('.holo-inner');
         if(inner)inner.style.transform='';
-        if(emoji)emoji.style.transform='';
-        if(holo){holo.style.setProperty('--mx','50%');holo.style.setProperty('--my','50%');}
+        resetHoloPaint(holo);
       }
     }
     function applyGyroTilt(){
@@ -769,12 +796,9 @@
         c.style.transition=TM;
         c.style.transform='perspective(850px) rotateX('+(-bx*3).toFixed(2)+'deg) rotateY('+(gy*4).toFixed(2)+'deg) translateY(-2px)';
       });
-      var holo=document.getElementById('holo'),inner=holo&&holo.querySelector('.holo-inner'),emoji=holo&&holo.querySelector('.holo-emoji');
-      if(gyro.stickerOpen&&holo&&inner&&emoji){
-        holo.style.setProperty('--mx',(50+gy*24).toFixed(1)+'%');
-        holo.style.setProperty('--my',(50+bx*24).toFixed(1)+'%');
-        inner.style.transform='rotateX('+(-bx*18).toFixed(1)+'deg) rotateY('+(gy*18).toFixed(1)+'deg)';
-        emoji.style.transform='translateZ(8px) translate('+(-gy*11).toFixed(1)+'px,'+(bx*11).toFixed(1)+'px)';
+      var holo=document.getElementById('holo');
+      if(gyro.stickerOpen&&holo){
+        if(window.__paintHoloSticker)window.__paintHoloSticker(holo,0.5+gy*0.5,0.5+bx*0.5);
       }
     }
     function onGyro(e){
@@ -917,27 +941,52 @@
   /* ---- holographic corner sticker ---- */
   (function(){
     var holo=document.getElementById('holo');if(!holo)return;
-    var emoji=holo.querySelector('.holo-emoji'),inner=holo.querySelector('.holo-inner'),path=document.getElementById('holoPath');
+    var emoji=holo.querySelector('.holo-emoji'),emojiTrack=holo.querySelector('.holo-emoji-track'),inner=holo.querySelector('.holo-inner'),path=document.getElementById('holoPath');
+    function paintHolo(target,fx,fy){
+      fx=Math.max(0,Math.min(1,fx));fy=Math.max(0,Math.min(1,fy));
+      var dx=fx-.5,dy=fy-.5,angle=(120+dx*140-dy*70).toFixed(0);
+      target.style.setProperty('--holo-x',Math.round(50+dx*42)+'%');
+      target.style.setProperty('--holo-y',Math.round(50+dy*42)+'%');
+      target.style.setProperty('--holo-angle',angle+'deg');
+      target.style.setProperty('--emoji-x',Math.round(-dx*16)+'px');
+      target.style.setProperty('--emoji-y',Math.round(-dy*16)+'px');
+      target.style.setProperty('--shine-x',Math.round(-dx*32)+'px');
+      target.style.setProperty('--shine-y',Math.round(-dy*32)+'px');
+      target.style.setProperty('--text-x',Math.round(dx*8)+'px');
+      target.style.setProperty('--text-y',Math.round(dy*8)+'px');
+      inner.style.transform='rotateX('+(-dy*16).toFixed(1)+'deg) rotateY('+(dx*16).toFixed(1)+'deg)';
+    }
+    function resetHolo(target){
+      if(!target)return;
+      target.style.setProperty('--holo-x','50%');
+      target.style.setProperty('--holo-y','50%');
+      target.style.setProperty('--holo-angle','120deg');
+      target.style.setProperty('--emoji-x','0px');
+      target.style.setProperty('--emoji-y','0px');
+      target.style.setProperty('--shine-x','0px');
+      target.style.setProperty('--shine-y','0px');
+      target.style.setProperty('--text-x','0px');
+      target.style.setProperty('--text-y','0px');
+      inner.style.transform='';
+    }
+    window.__paintHoloSticker=paintHolo;
     function starPts(sp,o,i2){var pts=[],st=Math.PI/sp;for(var i=0;i<sp*2;i++){var r=(i%2===0)?o:i2,a=i*st-Math.PI/2;pts.push([50+Math.cos(a)*r,50+Math.sin(a)*r]);}return pts;}
     var pts=starPts(22,50,39);
     holo.style.setProperty('--star','polygon('+pts.map(function(p){return p[0].toFixed(2)+'% '+p[1].toFixed(2)+'%';}).join(',')+')');
     path.setAttribute('d','M'+pts.map(function(p){return p[0].toFixed(2)+' '+p[1].toFixed(2);}).join('L')+'Z');
     var POOL=["🥇","🥈","🥉","🆎","🏧","🅰️","♒","♈","🔙","🅱️","🆑","🆒","♋","♑","🎄","🔚","🆓","♊","🆔","🉑","🈸","🉐","🏯","㊗️","🈹","🎎","🈚","🈁","🈷️","🈵","🈶","🈺","🈴","🏣","🈲","🈯","㊙️","🈂️","🔰","🈳","♌","♎","🤶","🆕","🆖","🆗","👌","🔛","🅾️","⛎","🅿️","♓","🔜","🆘","♐","🎅","♏","🗽","🦖","🔝","♉","🗼","🆙","🆚","♍","💤","🧮","🪗","🩹","🎟️","🚡","✈️","🛬","🛫","⏰","⚗️","👽","👾","🚑","🏈","🏺","🫀","⚓","💢","😠","👿","😧","🐜","📶","😰","🚛","🎨","😲","⚛️","🛺","🚗","🥑","🪓","👶","👼","🍼","🐤","🚼","👇","👈","👉","👆","🎒","🥓","🦡","🏸","🥯","🛄","🥖","⚖️","🩰","🎈","🗳️","🍌","🪕","🏦","📊","💈","⚾","🧺","🏀","🦇","🛁","🔋","🏖️","😁","🫘","🐻","💓","🦫","🛏️","🍺","🪲","🔔","🫑","🔕","🛎️","🍱","🧃","🚲","👙","🧢","☣️","🐦","🎂","🦬","🫦","⚫","🏴","🖤","⬛","◾","◼️","✒️","▪️","🔲","🌼","🐡","📘","🔵","💙","🟦","🫐","🐗","💣","🦴","🔖","📑","📚","🪃","🍾","💐","🏹","🥣","🎳","🥊","👦","🧠","🍞","🤱","🧱","🌉","💼","🩲","🔆","🥦","💔","🧹","🟤","🤎","🟫","🧋","🫧","🪣","🐛","🏗️","🚅","🎯","🌯","🚌","🚏","👤","👥","🧈","🦋","🌵","📅","🤙","🐪","📷","📸","🏕️","🕯️","🍬","🥫","🛶","🗃️","📇","🗂️","🎠","🎏","🪚","🥕","🏰","🐈","🐱","😹","😼","⛓️","🪑","📉","📈","💹","☑️","✔️","✅","🧀","🏁","🍒","🌸","♟️","🌰","🐔","🧒","🚸","🐿️","🍫","🥢","⛪","🚬","🎦","Ⓜ️","🎪","🏙️","🌆","🗜️","🎬","👏","🏛️","🍻","🥂","📋","🔃","📕","📪","📫","🌂","☁️","🌩️","⛈️","🌧️","🌨️","🤡","♣️","👝","🧥","🪳","🍸","🥥","⚰️","🪙","🥶","💥","☄️","🧭","💽","🖱️","🎊","😖","😕","🚧","👷","🎛️","🏪","🍚","🍪","🍳","🪸","🛋️","🔄","💑","🐄","🐮","🤠","🦀","🖍️","💳","🌙","🦗","🏏","🐊","🥐","❌","❎","🤞","🎌","⚔️","👑","🩼","😿","😢","🔮","🥒","🥤","🧁","🥌","➰","💱","🍛","🍮","🛃","🥩","🌀","🗡️","🍡","💨","🧏","🌳","🦌","🚚","🏬","🏚️","🏜️","🏝️","🖥️","🕵️","♦️","💠","🔅","😞","🥸","🫪","➗","🤿","🪔","💫","🧬","🦤","🐕","🐶","💵","🐬","🫏","🚪","🫥","🔯","➿","🍩","🕊️","↙️","↘️","⬇️","😓","🔽","🐉","🐲","👗","🤤","🩸","💧","🥁","🦆","🥟","📀","📧","🦅","👂","🌽","🦻","🥚","🍆","✴️","✳️","🕣","🕗","⏏️","🔌","🐘","🛗","🕦","🕚","🧝","🪹","😡","✉️","📩","💶","🌲","🐑","🤯","😑","👁️","👀","😘","🥹","😋","😱","🤮","🫩","😵","🫤","🤭","🤕","😷","🧐","🫢","😮","🫣","🤨","🙄","😤","🤬","😂","🤒","😛","😶","🏭","🧚","🧆","🍂","👪","⏩","⏬","⏪","⏫","📠","😨","🪶","♀️","🎡","⛴️","🏑","🫯","🗄️","📁","🎞️","📽️","🫆","🔥","🚒","🧯","🧨","🎆","🌓","🌛","🐟","🍥","🎣","🕠","🕔","⛳","🦩","🔦","🥿","🫓","⚜️","💪","💾","🎴","😳","🪈","🪰","🥏","🛸","🌫️","🌁","🙏","🪭","🫕","🦶","👣","🍴","🍽️","🥠","⛲","🖋️","🕟","🍀","🕓","🦊","🖼️","🍟","🍤","🐸","🐥","☹️","😦","⛽","🌕","🌝","⚱️","🎲","🧄","⚙️","💎","🧞","👻","🫚","🦒","👧","🥛","👓","🌎","🌏","🌍","🌐","🧤","🌟","🥅","🐐","👺","🥽","🪿","🦍","🎓","🍇","🍏","📗","🟢","💚","🥗","🟩","🩶","😬","😺","😸","😀","😃","😄","😅","😆","💗","💂","🦮","🎸","🪮","🫈","🍔","🔨","⚒️","🛠️","🪬","🐹","🖐️","🫰","👜","🤝","🪉","🐣","🎧","🪦","🙉","💟","❣️","🫶","♥️","💘","💝","💲","🟰","🦔","🚁","🌿","🌺","👠","🚄","⚡","🥾","🛕","🦛","🕳️","⭕","🍯","🐝","🪝","🚥","🐎","🐴","🏇","🏥","☕","🌭","🥵","🌶️","♨️","🏨","⌛","⏳","🏠","🏡","🏘️","💯","😯","🛖","🪻","🧊","🍨","🏒","⛸️","🪪","📥","📨","🫵","☝️","♾️","🔤","🔡","🔠","🔢","🔣","🎃","🫙","👖","🪼","🃏","🕹️","🕋","🦘","🔑","⌨️","🔟","🪯","🛴","👘","💏","💋","😽","😗","😚","😙","🔪","🪁","🥝","🪢","🐨","🥼","🏷️","🥍","🪜","🐞","🛘","💻","🔷","🔶","🌗","🌜","⏮️","✝️","🍃","🪾","🥬","📒","🤛","↔️","⬅️","↪️","🛅","🗨️","🫲","🫷","🦵","🍋","🐆","🎚️","🩵","💡","🚈","🔗","🖇️","🦁","💄","🚮","🦎","🦙","🦞","🔒","🔐","🔏","🚂","🍭","🪘","🧴","🪷","😭","📢","🤟","🏩","💌","🪫","🧳","🫁","🤥","🧙","🪄","🧲","🔍","🔎","🀄","♂️","🦣","👨","🕺","🥭","🕰️","🦽","👞","🗾","🍁","🪇","🥋","🧉","🍖","🦾","🦿","⚕️","📣","🍈","🫠","📝","👬","🕎","🚹","🧜","🚇","🦠","🎤","🔬","🖕","🪖","🎖️","🌌","🚐","➖","🪞","🪩","🗿","📱","📴","📲","🤑","💰","💸","🐒","🐵","🚝","🥮","🎑","🫎","🕌","🦟","🛥️","🛵","🏍️","🦼","🛣️","🗻","⛰️","🚠","🚞","🐁","🐭","🪤","👄","🎥","✖️","🍄","🎹","🎵","🎶","🎼","🔇","💅","📛","🏞️","🤢","🧿","👔","🤓","🪺","🪆","😐","🌑","🌚","📰","⏭️","🌃","🕤","🕘","🥷","🚳","⛔","🚯","📵","🔞","🚷","🚭","🚱","👃","📓","📔","🔩","🐙","🍢","🏢","👹","🛢️","🗝️","👴","👵","🧓","🫒","🕉️","🚘","🚍","👊","🚔","🚖","🩱","🕜","🕐","🧅","📖","📂","👐","📭","📬","💿","📙","🟠","🧡","🟧","🦧","🫍","☦️","🦦","📤","🦉","🐂","🦪","📦","📄","📃","📟","🖌️","🫳","🌴","🫴","🤲","🥞","🐼","📎","🪂","🦜","〽️","🎉","🥳","🛳️","🛂","⏸️","🐾","🫛","☮️","🍑","🦚","🥜","🍐","🖊️","✏️","🐧","😔","🫂","👯","🤼","🎭","😣","🧑","🧔","🚴","👱","⛹️","🙇","🤸","🧗","🤦","🤺","🙍","🙅","🙆","💇","💆","🏌️","🛌","🧘","🧖","🕴️","🤵","🤹","🧎","🏋️","🚵","🤾","🤽","🙎","🙋","🚣","🏃","🤷","🧍","🏄","🏊","🛀","💁","🚶","👳","🫅","👲","👰","🧫","⛏️","🛻","🥧","🐖","🐷","🐽","💩","💊","🤌","🤏","🎍","🍍","🏓","🩷","🍕","🪅","🪧","🛐","▶️","⏯️","🛝","🥺","🪠","➕","🚓","🚨","👮","🐩","🎱","🍿","🏤","📯","📮","🍲","🚰","🥔","🪴","🍗","💷","🫗","😾","📿","🫃","🫄","🤰","🥨","🤴","👸","🖨️","🚫","🟣","💜","🟪","👛","📌","🧩","🐇","🐰","🦝","🏎️","📻","🔘","☢️","🚃","🛤️","🌈","🤚","✊","✋","🙌","🐏","🐀","🪒","🧾","⏺️","♻️","🍎","🔴","🧧","❗","❤️","🏮","❓","🟥","🔻","🔺","😌","🎗️","🔁","🔂","⛑️","🚻","◀️","💞","🦏","🎀","🍙","🍘","🤜","🗯️","➡️","⤵️","↩️","⤴️","🫱","🫸","💍","🛟","🪐","🍠","🤖","🪨","🚀","🧻","🗞️","🎢","🛼","🤣","🐓","🫜","🌹","🏵️","📍","🏉","🎽","👟","😥","🧷","🦺","⛵","🍶","🧂","🫡","🥪","🥻","🛰️","📡","🦕","🎷","🧣","🏫","✂️","🦂","🪛","📜","🦭","💺","🙈","🌱","🤳","🕢","🕖","🪡","🫨","🥘","☘️","🦈","🍧","🌾","🛡️","⛩️","🚢","🌠","🛍️","🛒","🍰","🩳","🪏","🚿","🦐","🔀","🤫","🤘","🕡","🕕","🛹","⛷️","🎿","💀","☠️","🦨","🛷","😴","😪","🙁","🙂","🎰","🦥","🛩️","🔹","🔸","😻","☺️","😇","😍","🥰","😈","🤗","😊","😎","🥲","😏","🐌","🐍","🤧","🏔️","🏂","❄️","☃️","⛄","🧼","⚽","🧦","🍦","🥎","♠️","🍝","❇️","🎇","✨","💖","🙊","🔊","🔈","🔉","🗣️","💬","🚤","🕷️","🕸️","🗓️","🗒️","🐚","🫟","🧽","🥄","🚙","🏅","🐳","🦑","😝","🏟️","⭐","🤩","☪️","✡️","🚉","🍜","🩺","⏹️","🛑","⏱️","📏","🍓","🎙️","🥙","☀️","⛅","🌥️","🌦️","🌤️","🌞","🌻","🕶️","🌅","🌄","🌇","🦸","🦹","🍣","🚟","🦢","💦","🕍","💉","👕","🌮","🥡","🫔","🎋","🍊","🚕","🍵","🫖","📆","🧸","☎️","📞","🔭","📺","🕥","🕙","🎾","⛺","🧪","🌡️","🤔","🩴","💭","🧵","🕞","🕒","👎","👍","🎫","🐅","🐯","⏲️","😫","🚽","🍅","👅","🧰","🦷","🪥","🎩","🌪️","🖲️","🚜","🚆","🚊","🚋","⚧️","🪎","🚩","📐","🔱","🧌","🚎","🪊","🏆","🍹","🐠","🎺","🌷","🥃","🦃","🐢","🕧","🕛","🐫","🕝","💕","🕑","☂️","⛱️","☔","😒","🦄","🔓","↕️","↖️","↗️","⬆️","🙃","🔼","🧛","🚦","📳","✌️","📹","🎮","📼","🎻","🌋","🏐","🖖","🧇","🌘","🌖","⚠️","🗑️","⌚","🐃","🚾","🔫","🌊","🍉","👋","〰️","🌒","🌔","🙀","😩","💒","🐋","🛞","☸️","♿","🦯","⚪","❕","🏳️","💮","🤍","⬜","◽","◻️","❔","▫️","🔳","🥀","🎐","🌬️","🪟","🍷","🪽","😉","😜","🛜","🐺","👩","👫","💃","🧕","👢","👚","👒","👡","👭","🚺","🪵","🥴","🗺️","🪱","😟","🎁","🔧","✍️","🩻","🧶","🥱","🟡","💛","🟨","💴","☯️","🪀","🤪","🦓","🤐","🧟"];
-    function reroll(){var h='';for(var i=0;i<13;i++){var e=POOL[(Math.random()*POOL.length)|0],x=(8+Math.random()*84).toFixed(1),y=(8+Math.random()*84).toFixed(1),r=((Math.random()*70-35)|0),s=(13+Math.random()*13).toFixed(0);h+='<span style="left:'+x+'%;top:'+y+'%;font-size:'+s+'px;--r:'+r+'deg">'+e+'</span>';}emoji.innerHTML=h;}
+    function reroll(){var h='';for(var i=0;i<13;i++){var e=POOL[(Math.random()*POOL.length)|0],x=(14+Math.random()*72).toFixed(1),y=(14+Math.random()*72).toFixed(1),r=((Math.random()*70-35)|0),s=(38+Math.random()*30).toFixed(0);h+='<span style="left:'+x+'%;top:'+y+'%;font-size:'+s+'px;--r:'+r+'deg">'+e+'</span>';}emojiTrack.innerHTML=h;}
     reroll();
-    holo.addEventListener('click',function(e){e.stopPropagation();if(window.__openGyroSticker)window.__openGyroSticker();reroll();inner.classList.remove('pop');void inner.offsetWidth;inner.classList.add('pop');});
+    holo.addEventListener('click',function(e){e.stopPropagation();if(window.__openGyroSticker)window.__openGyroSticker();reroll();holo.classList.remove('pop');inner.classList.remove('pop');void holo.offsetWidth;holo.classList.add('pop');inner.classList.add('pop');});
     document.addEventListener('click',function(e){
       if(document.body.classList.contains('gyro-tilt')&&!holo.contains(e.target)&&window.__closeGyroSticker)window.__closeGyroSticker();
     });
     if(!reduce){
       holo.addEventListener('mousemove',function(e){
         var r=holo.getBoundingClientRect(),fx=(e.clientX-r.left)/r.width,fy=(e.clientY-r.top)/r.height;
-        holo.style.setProperty('--mx',(fx*100).toFixed(1)+'%');
-        holo.style.setProperty('--my',(fy*100).toFixed(1)+'%');
-        inner.style.transform='rotateX('+((0.5-fy)*24).toFixed(1)+'deg) rotateY('+((fx-0.5)*24).toFixed(1)+'deg)';
-        emoji.style.transform='translateZ(8px) translate('+((0.5-fx)*16).toFixed(1)+'px,'+((0.5-fy)*16).toFixed(1)+'px)';
+        paintHolo(holo,fx,fy);
       });
-      holo.addEventListener('mouseleave',function(){inner.style.transform='';emoji.style.transform='';holo.style.setProperty('--mx','50%');holo.style.setProperty('--my','50%');});
+      holo.addEventListener('mouseleave',function(){resetHolo(holo);});
     }
   })();
 
