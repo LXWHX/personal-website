@@ -518,6 +518,12 @@
         <p data-i18n="p6d">用 p5.js 构建多款交互游戏，应用随机生成、Boids 群集与 2D 物理引擎，实现碰撞、路径规划与动态场景。</p>
         <div class="tags"><span>p5.js</span><span>Physics</span><span>Creative</span></div>
       </div>
+      <div class="proj reveal tilt">
+        <div class="pdot" style="background:#8fb6cf"></div>
+        <h4 data-i18n="p7t">世界弹射物语 · 非官方档案馆</h4>
+        <p data-i18n="p7d">为已停服游戏搭建的中英双语资料保存站：485 角色、384 武器、全剧情、1400+ 官方图存档与可播放音乐室。</p>
+        <div class="tags"><span>Archive</span><span>i18n</span><span>Vercel</span></div>
+      </div>
     </div>
   </div>
 </section>
@@ -619,6 +625,8 @@
     p5d:{zh:'从加密请求协议起步的并发键值存储，支持增删改、增量持久化、配额与 MRU 资源管理，并实现虚拟执行环境。',en:'A concurrent key-value store from encrypted request protocols up — CRUD, incremental persistence, quotas & MRU resource management, plus a virtual execution environment.'},
     p6t:{zh:'p5.js 互动小游戏',en:'p5.js Minigames'},
     p6d:{zh:'用 p5.js 构建多款交互游戏，应用随机生成、Boids 群集与 2D 物理引擎，实现碰撞、路径规划与动态场景。',en:'Interactive games in p5.js using randomized spawning, Boids flocking, and a 2D physics engine — collisions, pathfinding, and dynamic scenes.'},
+    p7t:{zh:'世界弹射物语 · 非官方档案馆',en:'World Flipper · Fan Archive'},
+    p7d:{zh:'为已停服游戏搭建的中英双语资料保存站：485 角色、384 武器、全剧情、1400+ 官方图存档与可播放音乐室。',en:'A bilingual fan archive for a game that ended service: 485 characters, 384 weapons, full story, 1,400+ archived official artworks, and a playable soundtrack room.'},
     scTitle:{zh:'技能栈 · 联系',en:'Skills · Contact'},
     langLabel:{zh:'编程语言',en:'Languages'},
     techLabel:{zh:'技术栈',en:'Technologies'},
@@ -890,7 +898,14 @@
      sum:{zh:'用 p5.js 打造的多款交互小游戏。',en:'A set of interactive minigames built with p5.js.'},
      pts:{zh:['随机化生成与 Boids 群集行为','2D 物理引擎驱动的运动','实体碰撞、路径规划与动态场景更新','优化渲染性能与交互流畅度'],
         en:['Randomized spawning and Boids flocking','2D physics-driven movement','Collisions, pathfinding, and dynamic scenes','Tuned rendering performance and interaction feel']},
-     stack:['p5.js','Physics','Boids','Creative']}
+     stack:['p5.js','Physics','Boids','Creative']},
+    {dot:'#8fb6cf',link:'https://wf.joeli.site',yr:'2026 · Ongoing',
+     t:{zh:'世界弹射物语 · 非官方档案馆',en:'World Flipper · Fan Archive'},
+     role:{zh:'个人项目 · 独立开发',en:'Personal project · solo'},
+     sum:{zh:'为 2024 年 2 月停服的《世界弹射物语》搭建的非官方博物馆与档案馆，为玩家社区长期保存游戏资料。',en:'An unofficial museum & archive preserving World Flipper — a game that ended service in Feb 2024 — for its player community.'},
+     pts:{zh:['485 名角色（立绘 / 表情 / 语音）、384 件武器、全部主线与活动剧情','1429 张官方推特图片存档，配可播放的原声音乐室','全站中英双语适配；独立完成数据收集、前端开发与部署','非商业 fan 项目，站内明确标注素材版权归原厂商'],
+        en:['485 characters (artwork / expressions / voice lines), 384 weapons, and every main & event story','1,429 archived official Twitter artworks, plus a playable original-soundtrack room','Fully bilingual (中文 / English); solo data curation, frontend, and deployment','Non-commercial fan project; in-game asset copyright attributed to the publisher']},
+     stack:['Archive','i18n','Static Site','Vercel']}
   ];
   var modalEl=document.getElementById('modal'),mClose=document.getElementById('modalClose'),curIdx=-1;
   function fillModal(i){
@@ -905,7 +920,8 @@
     var st=document.getElementById('mStack');st.innerHTML='';
     d.stack.forEach(function(s){var sp=document.createElement('span');sp.className='chip';sp.textContent=s;st.appendChild(sp);});
     var rp=document.getElementById('mRepo');
-    if(d.repo){rp.href=d.repo;rp.classList.add('show');document.getElementById('mRepoTxt').textContent=(lang==='zh'?'在 GitHub 查看仓库':'View repo on GitHub');}
+    if(d.repo){rp.href=d.repo;rp.classList.add('show');rp.innerHTML=REPO_GH;document.getElementById('mRepoTxt').textContent=(lang==='zh'?'在 GitHub 查看仓库':'View repo on GitHub');}
+    else if(d.link){rp.href=d.link;rp.classList.add('show');rp.innerHTML=REPO_EXT;document.getElementById('mRepoTxt').textContent=(lang==='zh'?'访问线上站点':'Visit live site');}
     else{rp.classList.remove('show');rp.removeAttribute('href');}
   }
   function openModal(i){curIdx=i;fillModal(i);modalEl.classList.add('open');modalEl.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';setTimeout(function(){mClose.focus();},60);}
@@ -915,6 +931,8 @@
   modalEl.addEventListener('click',function(e){if(e.target===modalEl)closeModal();});
   document.addEventListener('keydown',function(e){if(e.key==='Escape'&&modalEl.classList.contains('open'))closeModal();});
   var arrowSVG='<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M8 7h9v9"/></svg>';
+  var REPO_GH=document.getElementById('mRepo').innerHTML;
+  var REPO_EXT='<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M7 17L17 7M8 7h9v9"/></svg><span id="mRepoTxt"></span>';
   document.querySelectorAll('.proj').forEach(function(c,i){
     var a=document.createElement('div');a.className='open';a.innerHTML=arrowSVG;c.appendChild(a);
     c.addEventListener('click',function(){openModal(i);});
