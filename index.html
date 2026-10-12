@@ -1013,47 +1013,37 @@
     }
   })();
 
-  /* ---- visit / sticker-click counter (Supabase) ---- */
+  /* ---- visit / sticker-click counter (via /api/counter → Supabase) ---- */
   (function(){
-    /* ===== 填这两行：Supabase 项目设置 → API 里可以找到 =====
-       部署域名：joeli.site（记得在 Supabase 的 CORS / URL 配置里允许该域名） */
-    var SB_URL ='https://gvjjkioroiuxkbsithrn.supabase.co';   // TODO: 替换为你的 Project URL
-    var SB_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd2ampraW9yb2l1eGtic2l0aHJuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMwNjAzNzUsImV4cCI6MjA5ODYzNjM3NX0.R6DlKrICXcX5aV51KcvUxH5bZJF2oJr7nmwa6GkVuSI';       // anon public key
-    /* ====================================================== */
-
+    /* 浏览器只请求本站 /api/counter，由 Vercel 服务端转发 Supabase，
+       避免国内网络直连 *.supabase.co 被阻断导致计数器消失 */
     var el=document.getElementById('footCount');
     if(!el)return;
     var counts={visits:null,clicks:null};
-    var ready=SB_URL.indexOf('YOUR-')===-1 && SB_ANON.indexOf('YOUR-')===-1;
 
     function fmt(n){return n==null?'—':Number(n).toLocaleString(lang==='zh'?'zh-CN':'en-US');}
     function render(){
-      if(!ready||(counts.visits==null&&counts.clicks==null)){el.textContent='';return;}
+      if(counts.visits==null&&counts.clicks==null){el.textContent='';return;}
       var v=fmt(counts.visits),c=fmt(counts.clicks);
       el.innerHTML=(lang==='zh')
         ? '访问 <b>'+v+'</b> · 点击 <b>'+c+'</b>'
         : '<b>'+v+'</b> views · <b>'+c+'</b> clicks';
     }
     window.__renderCounter=render;
-    if(!ready)return;
 
-    function headers(){return {apikey:SB_ANON,Authorization:'Bearer '+SB_ANON,'Content-Type':'application/json'};}
-    function rpc(fn,body){return fetch(SB_URL+'/rest/v1/rpc/'+fn,{method:'POST',headers:headers(),body:JSON.stringify(body||{})}).then(function(r){return r.ok?r.json():Promise.reject(r.status);});}
+    function api(method,body){return fetch('/api/counter',{method:method,headers:{'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined}).then(function(r){return r.ok?r.json():Promise.reject(r.status);});}
     function noop(){}
 
     /* current values for display */
-    fetch(SB_URL+'/rest/v1/counters?select=id,value',{headers:headers()})
-      .then(function(r){return r.ok?r.json():Promise.reject(r.status);})
-      .then(function(rows){rows.forEach(function(row){if(row.id==='visits')counts.visits=+row.value;if(row.id==='sticker_clicks')counts.clicks=+row.value;});if(counts.clicks==null)counts.clicks=0;render();})
-      .catch(noop);
+    api('GET').then(function(d){if(d){if(d.visits!=null)counts.visits=d.visits;if(d.clicks!=null)counts.clicks=d.clicks;}render();}).catch(noop);
 
     /* count this visit */
-    rpc('increment_counter',{counter_id:'visits'}).then(function(v){counts.visits=+v;render();}).catch(noop);
+    api('POST',{id:'visits'}).then(function(d){if(d&&d.value!=null){counts.visits=d.value;render();}}).catch(noop);
 
     /* count sticker clicks (separate listener, doesn't touch the sticker's own handler) */
     var holoEl=document.getElementById('holo');
     if(holoEl)holoEl.addEventListener('click',function(){
-      rpc('increment_counter',{counter_id:'sticker_clicks'}).then(function(v){counts.clicks=+v;render();}).catch(noop);
+      api('POST',{id:'sticker_clicks'}).then(function(d){if(d&&d.value!=null){counts.clicks=d.value;render();}}).catch(noop);
     });
   })();
 
