@@ -10,6 +10,7 @@
 - **交互动效**：玻璃拟态、光斑背景、卡片倾斜、滚动渐显；移动端支持陀螺仪
 - **全息贴纸彩蛋**：右下角那颗「别点」
 - **访问计数**：页脚访问量与贴纸点击量，经 `/api/counter` 转发 Supabase
+- **Vercel Speed Insights**：接入真实用户性能数据
 - 尊重 `prefers-reduced-motion`
 
 ## 结构
@@ -17,18 +18,22 @@
 ```
 index.html        # 全部内容、样式与交互（单文件）
 api/counter.js    # Vercel Serverless Function：代理 Supabase 计数
+package.json      # 仅用于本地预览（serve）与 Speed Insights 依赖
+vercel.json
 favicon-32.png
 apple-touch-icon.png
-vercel.json
 ```
 
 ## 本地预览
 
-无需安装依赖，任选其一：
+```bash
+npm install
+npm run dev
+```
+
+或用任意静态服务器：
 
 ```bash
-npx serve .
-# 或
 python -m http.server 8000
 ```
 
